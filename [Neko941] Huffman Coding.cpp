@@ -34,13 +34,11 @@ struct compare
     }
 };
 
-void encode(Node *root, string str,
-            unordered_map<char, string> &huffmanCode)
+void encode(Node *root, string str, unordered_map<char, string> &huffmanCode)
 {
     if (root == nullptr)
         return;
-
-    // found a leaf node
+        
     if (!root->left && !root->right)
     {
         huffmanCode[root->ch] = str;
