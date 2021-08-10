@@ -5,74 +5,20 @@
 #define INFINITY 9999
 #define MAX 100
 
+int choice;
+int i;
+int j;
+
 int graph[MAX][MAX];
 int cost[MAX][MAX];
 int distance[MAX];
 int predecessor[MAX];
 int visited[MAX];
-int count;
-int min_distance;
-int nextnode;
-int i;
-int j;
-int startnode;
 int num_vertices;
-int fill_data;
-
-void dijkstra()
-{
-    for (i = 0; i < num_vertices; i++)
-    {
-        for (j = 0; j < num_vertices; j++)
-        {
-            if (graph[i][j] == 0)
-            {
-                cost[i][j] = INFINITY;
-            }
-            else
-            {
-                cost[i][j] = graph[i][j];
-            }
-        }
-    }
-
-    for (i = 0; i < num_vertices; i++)
-    {
-        distance[i] = cost[startnode][i];
-        predecessor[i] = startnode;
-        visited[i] = 0;
-    }
-
-    distance[startnode] = 0;
-    visited[startnode] = 1;
-    count = 0;
-
-    while (count < num_vertices)
-    {
-        min_distance = INFINITY;
-        for (i = 0; i < num_vertices; i++)
-        {
-            if (distance[i] < min_distance && !visited[i])
-            {
-                min_distance = distance[i];
-                nextnode = i;
-            }
-        }
-        visited[nextnode] = 1;
-        for (i = 0; i < num_vertices; i++)
-        {
-            if (!visited[i])
-            {
-                if (min_distance + cost[nextnode][i] < distance[i])
-                {
-                    distance[i] = min_distance + cost[nextnode][i];
-                    predecessor[i] = nextnode;
-                }
-                count++;
-            }
-        }
-    }
-}
+int startnode;
+int count;
+int mindistance;
+int nextnode;
 
 void print_result()
 {
@@ -154,6 +100,56 @@ void print_result()
         {
             printf("%c", 196);
         }
+    }
+}
+
+void dijkstra()
+{
+    for (i = 0; i < num_vertices; i++)
+        for (j = 0; j < num_vertices; j++)
+            if (graph[i][j] == 0)
+            {
+                cost[i][j] = INFINITY;
+            }
+            else
+            {
+                cost[i][j] = graph[i][j];
+            }
+
+    for (i = 0; i < num_vertices; i++)
+    {
+        distance[i] = cost[startnode][i];
+        predecessor[i] = startnode;
+        visited[i] = 0;
+    }
+
+    distance[startnode] = 0;
+    visited[startnode] = 1;
+    count = 1;
+
+    while (count < num_vertices - 1)
+    {
+        mindistance = INFINITY;
+        for (i = 0; i < num_vertices; i++)
+            if (distance[i] < mindistance && !visited[i])
+            {
+                mindistance = distance[i];
+                nextnode = i;
+            }
+
+        visited[nextnode] = 1;
+        for (i = 0; i < num_vertices; i++)
+        {
+            if (!visited[i])
+            {
+                if (mindistance + cost[nextnode][i] < distance[i])
+                {
+                    distance[i] = mindistance + cost[nextnode][i];
+                    predecessor[i] = nextnode;
+                }
+            }
+        }
+        count++;
     }
 }
 
@@ -259,21 +255,41 @@ void implementation()
     while (1)
     {
         printf("%c%c%c%c%c%c%c%c%c%c   MENU   %c%c%c%c%c%c%c%c%c%c\n", 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17);
-        printf("\t1. Default (9v - Undirected)\n");
-        printf("\t2. Default (5v - Directed)\n");
+        printf("\t1. Default (5v - Directed)\n");
+        printf("\t2. Default (9v - Undirected)\n");
         printf("\t3. Manual\n");
         printf("\t4. Random (Undirected)\n");
         printf("\t5. Random (Directed)\n");
         printf("\t0. Exit\n");
         printf(">> ");
-        scanf("%d", &fill_data);
+        scanf("%d", &choice);
         printf("----------------------\n");
 
-        switch (fill_data)
+        switch (choice)
         {
         case 0:
             return;
         case 1:
+            num_vertices = 5;
+
+            graph[0][1] = 10; // s -> t
+            graph[0][2] = 5;  // s -> y
+            graph[1][3] = 1;  // t -> x
+            graph[1][2] = 2;  // t -> y
+            graph[3][4] = 4;  // x -> z
+            graph[2][1] = 3;  // y -> t
+            graph[2][3] = 9;  // y -> x
+            graph[2][4] = 2;  // y -> z
+            graph[4][3] = 6;  // z ->
+            graph[4][0] = 7;  // z -> s
+
+            print_data();
+            printf("\n\nEnter the starting node:\n>> ");
+            scanf("%d", &startnode);
+            dijkstra();
+            print_result();
+            break;
+        case 2:
             num_vertices = 9;
 
             graph[0][1] = 4;
@@ -304,27 +320,6 @@ void implementation()
             graph[8][2] = 2;
             graph[8][6] = 6;
             graph[8][7] = 7;
-
-            print_data();
-
-            printf("\n\nEnter the starting node:\n>> ");
-            scanf("%d", &startnode);
-            dijkstra();
-            print_result();
-            break;
-        case 2:
-            num_vertices = 5;
-
-            graph[0][1] = 10; // s -> t
-            graph[0][2] = 5; // s -> y
-            graph[1][3] = 1; // t -> x
-            graph[1][2] = 2; // t -> y
-            graph[3][4] = 4; // x -> z
-            graph[2][1] = 3; // y -> t
-            graph[2][3] = 9; // y -> x
-            graph[2][4] = 2; // y -> z
-            graph[4][3] = 6; // z ->
-            graph[4][0] = 7; // z -> s
 
             print_data();
 
